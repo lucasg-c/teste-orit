@@ -10,4 +10,15 @@ export class CustomersMapper {
       customer.cpf,
     );
   }
+
+  toModel(savedCustomer: any): Customer {
+    return new Customer(
+      savedCustomer.id,
+      savedCustomer.name,
+      savedCustomer.email,
+      savedCustomer.birthdate,
+      savedCustomer.phone,
+      savedCustomer.cpf,
+    );
+  }
 }
