@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { CustomersMapper } from './customers.mapper';
@@ -34,8 +34,16 @@ export class CustomersService {
     return customers.map((c) => this.customersMapper.toModel(c));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+  async findOne(id: string) {
+    const customerById = await this.prismaService.customers.findUnique({
+      where: { id },
+    });
+
+    if (!customerById) {
+      throw new NotFoundException(`Customer of id=${id} does not exist.`);
+    }
+
+    return this.customersMapper.toModel(customerById);
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
