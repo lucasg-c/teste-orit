@@ -63,6 +63,13 @@ describe('CustomersController (e2e)', () => {
       .expect(404);
   });
 
+  it('should return 400 created when get by wrong id format', () => {
+    return request(app.getHttpServer())
+      .get(`/api/customers/${Math.random()}`)
+      .set('Accept', 'application/json')
+      .expect(400);
+  });
+
   afterAll(async () => {
     await app.close();
   });
