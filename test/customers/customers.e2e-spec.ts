@@ -35,7 +35,24 @@ describe('CustomersController (e2e)', () => {
         cpf: '45225685255',
       })
       .set('Accept', 'application/json')
-      .expect(201);
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).toHaveProperty('id');
+        expect(res.body['name']).toEqual('John Doe');
+        expect(res.body['email']).toEqual('john.doe@gmail.com');
+        expect(res.body['birthdate']).toEqual(
+          new Date('2000-06-01').toISOString(),
+        );
+        expect(res.body['cpf']).toEqual('45225685255');
+        expect(res.body['phone']).toEqual(null);
+      });
+  });
+
+  it('should return 200 created when finding all', () => {
+    return request(app.getHttpServer())
+      .get('/api/customers')
+      .set('Accept', 'application/json')
+      .expect(200);
   });
 
   afterAll(async () => {
