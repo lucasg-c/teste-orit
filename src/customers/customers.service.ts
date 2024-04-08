@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { CustomersMapper } from './customers.mapper';
@@ -13,6 +13,24 @@ export class CustomersService {
   ) {}
   async create(createCustomerDto: CreateCustomerDto): Promise<CustomerDto> {
     const customer = this.customersMapper.toEntity(createCustomerDto);
+
+    const cpfAlreadyExists = this.prismaService.customers.findUnique({
+      where: { cpf: customer.cpf },
+    });
+
+    if (cpfAlreadyExists) {
+      console.log(`CPF of number ${customer.cpf} already exists`);
+      throw new ConflictException(`Invalid CPF or email`);
+    }
+
+    const emailAlreadyExists = this.prismaService.customers.findUnique({
+      where: { email: customer.email },
+    });
+
+    if (emailAlreadyExists) {
+      console.log(`Email ${customer.email} already exists`);
+      throw new ConflictException(`Invalid CPF or email`);
+    }
 
     const savedCustomer = await this.prismaService.customers.create({
       data: {
