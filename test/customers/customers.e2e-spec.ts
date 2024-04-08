@@ -90,6 +90,13 @@ describe('CustomersController (e2e)', () => {
       .expect(404);
   });
 
+  it('should return 404 when delete by nonexistent id', () => {
+    return request(app.getHttpServer())
+      .delete(`/api/customers/${v4()}`)
+      .set('Accept', 'application/json')
+      .expect(404);
+  });
+
   afterAll(async () => {
     await app.close();
   });
