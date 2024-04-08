@@ -2,6 +2,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { v4 } from 'uuid';
 
 describe('CustomersController (e2e)', () => {
   let app: INestApplication;
@@ -53,6 +54,13 @@ describe('CustomersController (e2e)', () => {
       .get('/api/customers')
       .set('Accept', 'application/json')
       .expect(200);
+  });
+
+  it('should return 404 created when get by nonexistent id', () => {
+    return request(app.getHttpServer())
+      .get(`/api/customers/${v4()}`)
+      .set('Accept', 'application/json')
+      .expect(404);
   });
 
   afterAll(async () => {
