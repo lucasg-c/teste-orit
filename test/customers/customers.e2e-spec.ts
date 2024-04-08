@@ -18,7 +18,7 @@ describe('CustomersController (e2e)', () => {
     await app.init();
   });
 
-  it('should return 400 bad request when no body', () => {
+  it('should return 400 when no body', () => {
     return request(app.getHttpServer())
       .post('/api/customers')
       .send({})
@@ -26,7 +26,7 @@ describe('CustomersController (e2e)', () => {
       .expect(400);
   });
 
-  it('should return 201 created when valid body', () => {
+  it('should return 201 when valid body', () => {
     return request(app.getHttpServer())
       .post('/api/customers')
       .send({
@@ -49,25 +49,32 @@ describe('CustomersController (e2e)', () => {
       });
   });
 
-  it('should return 200 created when finding all', () => {
+  it('should return 200 when finding all', () => {
     return request(app.getHttpServer())
       .get('/api/customers')
       .set('Accept', 'application/json')
       .expect(200);
   });
 
-  it('should return 404 created when get by nonexistent id', () => {
+  it('should return 404 when get by nonexistent id', () => {
     return request(app.getHttpServer())
       .get(`/api/customers/${v4()}`)
       .set('Accept', 'application/json')
       .expect(404);
   });
 
-  it('should return 400 created when get by wrong id format', () => {
+  it('should return 400 when get by wrong id format', () => {
     return request(app.getHttpServer())
       .get(`/api/customers/${Math.random()}`)
       .set('Accept', 'application/json')
       .expect(400);
+  });
+
+  it('should return 404 when patch by nonexistent id', () => {
+    return request(app.getHttpServer())
+      .patch(`/api/customers/${v4()}`)
+      .set('Accept', 'application/json')
+      .expect(404);
   });
 
   afterAll(async () => {
