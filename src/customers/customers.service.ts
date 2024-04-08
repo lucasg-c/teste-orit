@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { CustomersMapper } from './customers.mapper';
@@ -64,8 +68,31 @@ export class CustomersService {
     return this.customersMapper.toModel(customerById);
   }
 
-  update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
+  async update(id: string, updateCustomerDto: UpdateCustomerDto) {
+    if (updateCustomerDto.birthdate) {
+      updateCustomerDto.birthdate = new Date(updateCustomerDto.birthdate);
+    }
+
+    const updatedCustomer = await this.prismaService.customers
+      .update({
+        where: {
+          id,
+        },
+        data: {
+          ...updateCustomerDto,
+        },
+      })
+      .catch((error) => {
+        if (error.code == 'P2025') {
+          throw new NotFoundException(`Customer of id=${id} does not exist.`);
+        }
+
+        if (error.code == 'P2002') {
+          throw new ConflictException(`Invalid email or CPF.`);
+        }
+      });
+
+    return this.customersMapper.toModel(updatedCustomer);
   }
 
   remove(id: number) {
