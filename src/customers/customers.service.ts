@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { Customer } from './entities/customer.entity';
 import { CustomersMapper } from './customers.mapper';
 import { PrismaService } from '../db/prisma.service';
+import { CustomerDto } from './dto/customer.dto';
 
 @Injectable()
 export class CustomersService {
@@ -11,7 +11,7 @@ export class CustomersService {
     private customersMapper: CustomersMapper,
     private prismaService: PrismaService,
   ) {}
-  async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+  async create(createCustomerDto: CreateCustomerDto): Promise<CustomerDto> {
     const customer = this.customersMapper.toEntity(createCustomerDto);
 
     const savedCustomer = await this.prismaService.customers.create({
