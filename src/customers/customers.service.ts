@@ -28,8 +28,10 @@ export class CustomersService {
     return this.customersMapper.toModel(savedCustomer);
   }
 
-  findAll() {
-    return `This action returns all customers`;
+  async findAll() {
+    const customers = await this.prismaService.customers.findMany({});
+
+    return customers.map((c) => this.customersMapper.toModel(c));
   }
 
   findOne(id: number) {
