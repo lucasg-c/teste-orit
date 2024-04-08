@@ -70,6 +70,19 @@ describe('CustomersController (e2e)', () => {
       .expect(400);
   });
 
+  it('should return 400 when patch invalid data', () => {
+    return request(app.getHttpServer())
+      .patch(`/api/customers/${v4()}`)
+      .set('Accept', 'application/json')
+      .send({
+        name: 'John Doe',
+        email: 'john.doe@gmail.com',
+        birthdate: '2000-06-01',
+        cpf: '452256852554140',
+      })
+      .expect(400);
+  });
+
   it('should return 404 when patch by nonexistent id', () => {
     return request(app.getHttpServer())
       .patch(`/api/customers/${v4()}`)
