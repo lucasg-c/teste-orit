@@ -18,16 +18,17 @@ export class CustomersService {
   async create(createCustomerDto: CreateCustomerDto): Promise<CustomerDto> {
     const customer = this.customersMapper.toEntity(createCustomerDto);
 
-    const cpfAlreadyExists = this.prismaService.customers.findUnique({
+    const cpfAlreadyExists = await this.prismaService.customers.findUnique({
       where: { cpf: customer.cpf },
     });
 
     if (cpfAlreadyExists) {
+      console.log({ cpfAlreadyExists });
       console.log(`CPF of number ${customer.cpf} already exists`);
       throw new ConflictException(`Invalid CPF or email`);
     }
 
-    const emailAlreadyExists = this.prismaService.customers.findUnique({
+    const emailAlreadyExists = await this.prismaService.customers.findUnique({
       where: { email: customer.email },
     });
 
@@ -95,7 +96,19 @@ export class CustomersService {
     return this.customersMapper.toModel(updatedCustomer);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} customer`;
+  async remove(id: string) {
+    const existsCustomerById = await this.prismaService.customers.findUnique({
+      where: { id },
+    });
+
+    if (!existsCustomerById) {
+      throw new NotFoundException(`Customer of id=${id} does not exist.`);
+    }
+
+    await this.prismaService.customers.delete({
+      where: { id },
+    });
+
+    console.log(`Deleted customer of id=${id}`);
   }
 }

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
@@ -40,7 +41,8 @@ export class CustomersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customersService.remove(+id);
+  @HttpCode(204)
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.customersService.remove(id);
   }
 }
